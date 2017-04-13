@@ -16,6 +16,11 @@ module Selection
   end
 
   def find_one(id)
+
+    unless id.is_a Numeric
+      raise ArgumentError.new('ID must be an integer')
+    end
+
     row = connection.get_first_row <<-SQL
       SELECT #{columns.join ","} FROM #{table}
       WHERE id = #{id};
@@ -25,6 +30,11 @@ module Selection
   end
 
   def find_by(attribute, value)
+
+    unless attribute.is_a String && value.is_a String
+      raise ArgumentError.new('Input Values must be strings!')
+    end
+
     row = connection.get_first_row <<-SQL
       SELECT #{columns.join ","} FROM #{table}
       WHERE #{attribute} = #{BlocRecord::Utility.sql_strings(value)};
