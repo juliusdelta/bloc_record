@@ -15,15 +15,15 @@ module Persistence
     end
 
     fields = self.class.attributes.map { |col| "#{col}=#{BlocRecord::Utility.sql_strings(self.instance_variable_get('@#{col}'))}" }.join(",")
- 
-     self.class.connection.execute <<-SQL
+    
+    self.class.connection.execute <<-SQL
        UPDATE #{self.class.table}
        SET #{fields}
        WHERE id = #{self.id};
      SQL
- 
-     true
-   end
+    
+    true
+  end
   
   module ClassMethods
     def create(attrs)
