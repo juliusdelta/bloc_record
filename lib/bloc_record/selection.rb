@@ -17,9 +17,10 @@ module Selection
 
   def find_one(id)
 
-    # unless id.is_a Numeric
-    #   raise ArgumentError.new('ID must be an integer')
-    # end
+    # Exception one: Validates input is of numeric type and not another type
+    unless id.is_a?(Numeric)
+      raise ArgumentError.new('ID must be an integer')
+    end
 
     row = connection.get_first_row <<-SQL
       SELECT #{columns.join ","} FROM #{table}
@@ -31,9 +32,10 @@ module Selection
 
   def find_by(attribute, value)
 
-    # unless attribute.is_a String && value.is_a String
-    #   raise ArgumentError.new('Input Values must be strings!')
-    # end
+    # Exception one: Validates that both inputs are strings and not other types of input
+    unless attribute.is_a?(String) && value.is_a?(String)
+      raise ArgumentError.new('Input Values must be strings!')
+    end
 
     row = connection.get_first_row <<-SQL
       SELECT #{columns.join ","} FROM #{table}
