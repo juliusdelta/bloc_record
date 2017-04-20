@@ -18,7 +18,7 @@ module Selection
   def find_one(id)
 
     # Exception one: Validates input is of numeric type and not another type
-    unless id.is_a?(Numeric)
+    unless id.is_a?(Integer)
       raise ArgumentError.new('ID must be an integer')
     end
 

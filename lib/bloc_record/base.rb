@@ -11,12 +11,18 @@ module BlocRecord
     extend Schema
     extend Connection
 
-    def initialize(options={})
-      options = BlocRecord::Utility.convert_keys(options)
+    def initialize(columns={})
+      columns = BlocRecord::Utility.convert_keys(columns)
 
-      self.class.columns.each do |col|
-        self.class.send(:attr_accessor, col)
-        self.instance_variable_set("@#{col}", options[col])
+      columns.each do |col, val|
+        public_send "#{col}=", val
+        # self.instance_variable_set("@#{col}", options[col])
+      end
+    end
+
+    def self.inherited(model)
+      model.columns.each do |col|
+        model.send(:attr_accessor, col)
       end
     end
   end

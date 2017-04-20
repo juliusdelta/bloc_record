@@ -7,12 +7,13 @@ module Schema
   end
 
   def schema
-    unless @schema
-      @schema = {}
-      connection.table_info(table) do |col|
-        @schema[col["name"]] = col["type"]
-      end
+    return @schema if defined? @schema
+    # unless @schema
+    @schema = {}
+    connection.table_info(table) do |col|
+      @schema[col["name"]] = col["type"]
     end
+    # end
     @schema
   end
 

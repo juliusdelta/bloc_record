@@ -1,31 +1,31 @@
 require_relative './test_helper.rb'
-
+BlocRecord.connect_to('test_db.sqlite')
 class Entry < BlocRecord::Base
 
-  def self.connect_to_database
+  def self.create_table
 
     db = SQLite3::Database.new 'test_db.sqlite'
-    db.execute("DROP TABLE entry")
+    db.execute('DROP TABLE entry')
     db.execute <<-SQL
-      CREATE TABLE entry
+      CREATE TABLE IF NOT EXISTS entry (
        id INTEGER PRIMARY KEY,
        name VARCHAR(30),
-       phone_number INTEGER;
+       phone_number INTEGER
+       );
     SQL
-
-    BlocRecord.connect_to("test_db.sqlite")
   end
-
 end
 
-class SelectionTest < MiniTest::Test
+class BlocRecordTest < MiniTest::Test
 
   def setup
-    Entry.create({"name" =>'Foo One', "phone_number" =>'999-999-9999'})
+    Entry.create_table
+    Entry.create({'name' =>'Foo One', 'phone_number' =>'999-999-9999'})
   end
 
-  def test_persistance_works
-    assert Entry.find(0).name == 'Foo One'
+  def test_last_works
+    assert_equal Entry.last.name, 'Foo One'
+    assert_equal Entry.last.phone_number, '999-999-9999'
   end
 
 end

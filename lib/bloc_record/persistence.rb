@@ -30,8 +30,7 @@ module Persistence
       attrs = BlocRecord::Utility.convert_keys(attrs)
       attrs.delete "id"
       vals = attributes.map { |key| BlocRecord::Utility.sql_strings(attrs[key]) }
-      
-      connection.execute <<-SQL
+      puts connection.execute <<-SQL
          INSERT INTO #{table} (#{attributes.join ","})
          VALUES (#{vals.join ","});
        SQL
