@@ -33,7 +33,7 @@ module Selection
   def find_by(attribute, value)
 
     # Exception one: Validates that both inputs are strings and not other types of input
-    unless attribute.is_a?(String) && value.is_a?(String)
+    unless value.is_a?(String)
       raise ArgumentError.new('Input Values must be strings!')
     end
 
@@ -43,6 +43,14 @@ module Selection
     SQL
 
     init_object_from_row(row)
+  end
+
+  def method_missing(m, *args, &block)
+    if m == :find_by_name
+      return find_by(:name, "#{args[0]}")
+    else
+     return "There is no #{m}"
+    end
   end
 
   def take(num=1)
@@ -109,4 +117,5 @@ module Selection
   def rows_to_array(rows)
     rows.map { |row| new(Hash[columns.zip(row)]) }
   end
+
 end
