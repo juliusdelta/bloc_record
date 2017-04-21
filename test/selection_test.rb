@@ -83,6 +83,15 @@ class BlocRecordTest < MiniTest::Test
     assert_nil get_all[4]
   end
 
+  def test_find_each
+    result_array = []
+    Entry.find_each { |e| result_array.push(e[0], e[1], e[2], e[3])}
+    assert_equal result_array[0].name, 'Foo One'
+    assert_equal result_array[1].name, 'Foo Two'
+    assert_equal result_array[2].name, 'Foo Three'
+    assert_equal result_array[3].name, 'Foo Four'
+  end
+
   ## Exception Testing
 
   def test_find_one_exception

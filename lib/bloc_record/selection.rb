@@ -105,6 +105,14 @@ module Selection
     rows_to_array(rows)
   end
 
+  def find_each
+    rows = connection.execute <<-SQL
+      SELECT #{columns.join ","} FROM #{table}
+    SQL
+
+    yield( rows_to_array(rows) )
+  end
+
   private
 
   def init_object_from_row(row)
