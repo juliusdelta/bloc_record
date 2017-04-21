@@ -62,6 +62,14 @@ class BlocRecordTest < MiniTest::Test
     refute_equal Entry.take_one, nil
   end
 
+  def test_take
+    take = Entry.take(3)
+    refute_equal take[0], nil
+    refute_equal take[1], nil
+    refute_equal take[2], nil
+    assert_equal take[3], nil
+  end
+
   def test_all
     get_all = Entry.all
     assert_equal get_all[0].name, 'Foo One'
@@ -79,6 +87,10 @@ class BlocRecordTest < MiniTest::Test
 
   def test_find_one_exception
     assert_raises(ArgumentError){ Entry.find("1") }
+  end
+
+  def test_find_by_exception
+    assert_raises(ArgumentError){ Entry.find_by(:name, 5)}
   end
 
 
