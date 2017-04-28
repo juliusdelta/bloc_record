@@ -49,7 +49,7 @@ module Selection
     if m == :find_by_name
       return find_by(:name, "#{args[0]}")
     else
-     return "There is no #{m}"
+     return "There is no #{m} method!"
     end
   end
 
@@ -105,12 +105,39 @@ module Selection
     rows_to_array(rows)
   end
 
-  def find_each
-    rows = connection.execute <<-SQL
-      SELECT #{columns.join ","} FROM #{table}
-    SQL
+  def find_each(start=1, batch_size=nil)
+
+    unless start.is_a?(Integer) && batch_size.is_a?(Integer) || batch_size == nil
+      raise ArgumentError.new('Arguments must be integers')
+    end
+
+    if batch_size == nil
+      rows = connection.execute <<-SQL
+        SELECT #{columns.join ","} FROM #{table}
+      SQL
+    elsif batch_size != nil
+      rows = connection.execute <<-SQL
+        SELECT #{columns.join ","} FROM #{table}
+        LIMIT #{batch_size} OFFSET #{start};
+      SQL
+    end
 
     yield( rows_to_array(rows) )
+  end
+
+  def find_in_batches(start=1, batch_size=1)
+    unless start.is_a?(Integer) && batch_size.is_a?(Integer)
+      raise ArgumentError.new('Arguments must be integers')
+    end
+    rows = connection.execute <<-SQL
+      SELECT #{columns.join ","} FROM #{table}
+      LIMIT #{batch_size} OFFSET #{start};
+    SQL
+
+    rows.each do |row|
+      yield(row)
+    end
+
   end
 
   private
