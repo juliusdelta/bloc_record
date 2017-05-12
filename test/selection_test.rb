@@ -51,7 +51,7 @@ class BlocRecordTest < MiniTest::Test
   end
 
   def test_method_missing_with_missing_method
-    assert_equal Entry.find_by_age('Foo One'), 'There is no find_by_age'
+    assert_equal Entry.find_by_age('Foo One'), 'There is no find_by_age method!'
   end
 
   def test_method_missing_with_valid_method
@@ -90,6 +90,13 @@ class BlocRecordTest < MiniTest::Test
     assert_equal result_array[1].name, 'Foo Two'
     assert_equal result_array[2].name, 'Foo Three'
     assert_equal result_array[3].name, 'Foo Four'
+  end
+
+  def test_update_attribute
+    updated_entry = Entry.first
+    updated_entry.update_attribute(:name, 'Bar One')
+    #updated_entry.save!
+    assert_equal updated_entry.name, 'Bar One'
   end
 
   ## Exception Testing

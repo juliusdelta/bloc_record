@@ -32,6 +32,10 @@ module Persistence
   def update_attributes(updates)
    self.class.update(self.id, updates)
   end
+
+  def destroy
+    self.class.destroy(self.id)
+  end
   
   module ClassMethods
     def update_all(updates)
@@ -50,6 +54,46 @@ module Persistence
       data = Hash[attributes.zip attrs.values]
       data["id"] = connection.execute("SELECT last_insert_rowid();")[0][0]
       new(data)
+    end
+
+    def destroy(*id)
+      if id.length > 1
+        where_clause = "WHERE id IN (#{id.join(",")});"
+      else
+        where_clause = "WHERE id = #{id.first};"
+      end
+
+      connection.execute <<-SQL
+       DELETE FROM #{table} #{where_clause}
+      SQL
+
+      true
+    end
+
+
+    def destroy_all(arg)
+
+      if arg.class == Array
+        conditions.join('=')
+      elsif arg.class == String
+        conditions = arg.to_s
+      elsif arg.class == Hash
+        conditions_hash = BlocRecord::Utility.convert_keys(condition_hash)
+        conditions = conditions_hash.map { |key,value| "#{key}=#{BlocRecord::Utility.sql_strings(value)}"}.join(" and ")
+      end
+
+      if conditions
+        connection.execute <<-SQL
+          DELETE FROM #{table}
+          WHERE #{conditions};
+        SQL
+      else
+        connection.execute <<-SQL
+          DELETE FROM #{table}
+        SQL
+      end
+
+      true
     end
 
     def method_missing(m, *args, &block)
